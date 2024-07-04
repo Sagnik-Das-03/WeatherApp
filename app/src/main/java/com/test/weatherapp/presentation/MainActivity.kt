@@ -14,8 +14,10 @@ import androidx.compose.material.Text
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.test.weatherapp.domain.util.getCityName
 import com.test.weatherapp.presentation.ui.theme.DarkBlue
 import com.test.weatherapp.presentation.ui.theme.DeepBlue
 import com.test.weatherapp.presentation.ui.theme.WeatherAppTheme
@@ -44,12 +46,14 @@ class MainActivity : ComponentActivity() {
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    val city = getCityName(context = LocalContext.current, latitude = viewModel.lat, longitude = viewModel.lng)
                     Column(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(DarkBlue)
+                            .background(Color.White)
                     ) {
                         WeatherCard(
+                            city = city,
                             state = viewModel.state,
                             backgroundColor = DeepBlue
                         )

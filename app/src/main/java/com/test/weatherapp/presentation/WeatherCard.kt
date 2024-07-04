@@ -18,16 +18,18 @@ import androidx.compose.ui.unit.sp
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import com.test.weatherapp.R
+import com.test.weatherapp.domain.util.getGmtOffsetFromSeconds
 
 @Composable
 fun WeatherCard(
+    city: String?,
     state: WeatherState,
     backgroundColor: Color,
     modifier: Modifier = Modifier
 ) {
     state.weatherInfo?.currentWeatherData?.let { data ->
         Card(
-            backgroundColor = backgroundColor,
+            backgroundColor = data.weatherType.color,
             shape = RoundedCornerShape(10.dp),
             modifier = modifier.padding(16.dp)
         ) {
@@ -37,6 +39,12 @@ fun WeatherCard(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                val gmt = state.weatherInfo.offset?.let { getGmtOffsetFromSeconds(it) }
+                if (city != null) {
+                    Text(text = "$city --- $gmt", color = Color.White)
+                }
+                Text(text = "${state.weatherInfo.timeZoneAbbr}")
+                Text(text = "${state.weatherInfo.timeZone}")
                 Text(
                     text = "Today ${
                         data.time.format(

@@ -1,5 +1,6 @@
 package com.test.weatherapp.presentation
 
+import android.location.Geocoder
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +11,7 @@ import com.test.weatherapp.domain.repository.WeatherRepository
 import com.test.weatherapp.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,6 +24,10 @@ class WeatherViewModel @Inject constructor(
         private set
     var weekstate by mutableStateOf(WeatherWeeklyState())
         private set
+    var lat by mutableStateOf(0.0)
+        private set
+    var lng by mutableStateOf(0.0)
+        private set
     fun loadWeatherInfo() {
         viewModelScope.launch {
             state = state.copy(
@@ -29,6 +35,8 @@ class WeatherViewModel @Inject constructor(
                 error = null
             )
             locationTracker.getCurrentLocation()?.let { location ->
+                lat = location.latitude
+                lng = location.longitude
                 when(val result = repository.getWeatherData(location.latitude, location.longitude)) {
                     is Resource.Success -> {
                         state = state.copy(
