@@ -2,6 +2,8 @@ package com.test.weatherapp.presentation
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,8 +14,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Scaffold
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +29,10 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import com.test.weatherapp.domain.util.getCityName
 import com.test.weatherapp.presentation.components.WeeklyWeatherForecast
-import com.test.weatherapp.presentation.ui.theme.DarkBlue
-import com.test.weatherapp.presentation.ui.theme.DeepBlue
 import com.test.weatherapp.presentation.ui.theme.WeatherAppTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -59,32 +62,10 @@ class MainActivity : ComponentActivity() {
                     viewModel.state.weatherInfo?.currentWeatherData?.weatherType?.color
                 val screenheight = LocalConfiguration.current.screenHeightDp
                 val screenwidth = LocalConfiguration.current.screenWidthDp
-
-                val statusBarLight = Color.Transparent.toArgb()
-                val statusBarDark = Color.Transparent.toArgb()
-                val navigationBarLight = Color.Transparent.toArgb()
-                val navigationBarDark = Color.Transparent.toArgb()
                 val view = LocalView.current
                 val isDarkMod = isSystemInDarkTheme()
 
-//                DisposableEffect(isDarkMod) {
-//                    val activity = view.context as Activity
-//                    activity.window.statusBarColor =
-//                        if(isDarkMod) ({statusBarDark})
-//                        else ({statusBarLight})
-//                    activity.window.navigationBarColor =
-//                        if(isDarkMod) ({navigationBarDark})
-//                        else ({navigationBarLight})
-//
-//                    WindowCompat.getInsetsController(activity.window, activity.window.decorView)
-//                        ?.apply {
-//                            isAppearanceLightStatusBars = !isDarkMod
-//                            isAppearanceLightNavigationBars = !isDarkMod
-//                        }
-//
-//                    onDispose { }
-//                }
-
+                HideSystemBars(context = LocalContext.current)
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -142,7 +123,7 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(16.dp))
-                                WeatherForecast(state = viewModel.state)
+                                WeatherForecast(state = viewModel.state, screenheight = screenheight, screenwidth = screenwidth)
                             }
                         }
                     } else {
@@ -169,3 +150,33 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun HideSystemBars(context: Context) {
+
+    DisposableEffect(Unit) {
+        val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
+        val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        insetsController?.apply {
+            hide(WindowInsetsCompat.Type.statusBars())
+            hide(WindowInsetsCompat.Type.navigationBars())
+            systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
+        onDispose {
+            insetsController?.apply {
+                show(WindowInsetsCompat.Type.statusBars())
+                show(WindowInsetsCompat.Type.navigationBars())
+                systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_BARS_BY_SWIPE
+            }
+        }
+    }
+}
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
+}

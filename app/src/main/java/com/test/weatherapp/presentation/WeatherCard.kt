@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -21,8 +20,7 @@ import androidx.compose.ui.unit.sp
 import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 import com.test.weatherapp.R
-import com.test.weatherapp.domain.util.getGmtOffsetFromSeconds
-import com.test.weatherapp.presentation.components.WeatherDataDisplay
+import com.test.weatherapp.presentation.components.HourlyWeatherDataDisplay
 
 @Composable
 fun WeatherCard(
@@ -89,7 +87,7 @@ fun WeatherCard(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    WeatherDataDisplay(
+                    HourlyWeatherDataDisplay(
                         type = "Pressure",
                         value = data.pressure.roundToInt(),
                         unit = "hpa",
@@ -99,7 +97,7 @@ fun WeatherCard(
                         screenheight = screenHeight,
                         screenWidth = screenWidth
                     )
-                    WeatherDataDisplay(
+                    HourlyWeatherDataDisplay(
                         type = "Humidity",
                         value = data.humidity,
                         unit = "%",
@@ -109,7 +107,7 @@ fun WeatherCard(
                         screenheight = screenHeight,
                         screenWidth = screenWidth
                     )
-                    WeatherDataDisplay(
+                    HourlyWeatherDataDisplay(
                         type = "Wind",
                         value = data.windSpeed.roundToInt(),
                         unit = "km/h",

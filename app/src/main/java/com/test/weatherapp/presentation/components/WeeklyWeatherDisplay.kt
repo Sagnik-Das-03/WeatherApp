@@ -73,7 +73,7 @@ fun WeeklyWeatherDisplay(
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)){
-                    append("Min Temp\n` R")
+                    append("Min Temp\n")
                 }
                 append("${weatherWeeklyData.apparent_temperature_min}°C")
             },
