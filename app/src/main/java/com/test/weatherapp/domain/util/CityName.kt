@@ -22,16 +22,19 @@ fun getCityName(context: Context, latitude: Double, longitude: Double): String? 
 
 fun getGmtOffsetFromSeconds(secondsString: String): String {
     val seconds = secondsString.toLongOrNull()
-        ?: throw IllegalArgumentException("Invalid seconds string: $secondsString")
 
-    val milliseconds = seconds * 1000
+    if (seconds == null) {
+        throw IllegalArgumentException("Invalid seconds string: $secondsString")
+    }
 
-    val timeZone = TimeZone.getDefault()
+    val totalHours = seconds / 3600.0
 
-    val offsetMillis = timeZone.getOffset(milliseconds)
+    val hours = totalHours.toInt()
+    val minutes = ((totalHours - hours) * 60).toInt()
 
-    val hours = offsetMillis / 3600000
-    val minutes = (offsetMillis % 3600000) / 60000
+    val sign = if (seconds >= 0) "+" else "-"
 
-    return String.format("GMT%+d:%02d", hours, minutes)
+    return String.format("GMT(%s%d:%02d)", sign, Math.abs(hours), Math.abs(minutes))
 }
+
+

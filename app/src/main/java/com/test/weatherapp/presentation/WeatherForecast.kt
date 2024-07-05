@@ -1,5 +1,6 @@
 package com.test.weatherapp.presentation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -9,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.test.weatherapp.presentation.components.HourlyWeatherDisplay
 
 @Composable
 fun WeatherForecast(
@@ -18,6 +20,7 @@ fun WeatherForecast(
     state.weatherInfo?.weatherDataPerDay?.get(0)?.let { data ->
         Column(
             modifier = modifier
+                .background(color = Color.Black)
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
         ) {
